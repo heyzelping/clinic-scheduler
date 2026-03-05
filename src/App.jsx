@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 // ─────────────────────────────────────────────────────────────────────────────
 // ⚙️ CONFIGURATION — paste your Apps Script URL here after completing setup
 // ─────────────────────────────────────────────────────────────────────────────
-const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
+const APPS_SCRIPT_URL = "https://vercel.com/heyzelpings-projects/clinic-scheduler/5HHCN3MyPrWQwEHSdWoeMR2hXUxm";
 const isConfigured = () => APPS_SCRIPT_URL !== "YOUR_APPS_SCRIPT_URL_HERE";
 
 async function apiGet(action) {

@@ -1,5 +1,4 @@
-5 Mar 2026, 2:09 pm
-import { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ⚙️ CONFIGURATION — paste your Apps Script URL here after completing setup
@@ -602,8 +601,8 @@ return (
 </thead>
 <tbody>
 {[{ label: "DOCTORS", items: doctors }, { label: "NURSES", items: nurses }].map(({ label, items }) => (
-<>
-<tr key={label}>
+<React.Fragment key={label}>
+<tr>
 <td colSpan={days + 1} style={{ background: "var(--surface2)", color: "var(--text3)", fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "5px 14px" }}>{label}</td>
 </tr>
 {items.map(s => (
@@ -625,7 +624,7 @@ return (
 })}
 </tr>
 ))}
-</>
+</React.Fragment>
 ))}
 </tbody>
 </table>

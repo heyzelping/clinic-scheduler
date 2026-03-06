@@ -1,5 +1,5 @@
-5 Mar 2026, 3:22 pm
-import { useState, useEffect, useMemo } from "react";
+6 Mar 2026, 8:56 am
+import React, { useState, useEffect, useMemo } from "react";
 
 // ─── SEED DATA ────────────────────────────────────────────────────────────────
 const INITIAL_STAFF = [
@@ -335,10 +335,10 @@ return st === `BR-${branch}` || (s.branch === "Float" && st === "Float");
 const juniors = onDuty.filter(s => !isSeniorOnDate(s, ds));
 const seniors = onDuty.filter(s => isSeniorOnDate(s, ds) && (s.branch === branch || s.branch === "Float"));
 if (juniors.length > 0 && seniors.length === 0) {
-result.push({ type: "danger", date: ds, branch, msg: `Supervision violation — Branch ${branch}`, desc: `${juniors.map(j => j.name).join(", ")} working without senior cover` });
+result.push({ type: "danger", date: ds, branch, msg: `Supervision violation — ${branch === "A" ? "Orchard" : "Katong"}`, desc: `${juniors.map(j => j.name).join(", ")} working without senior cover` });
 }
 if (onDuty.length === 0) {
-result.push({ type: "warn", date: ds, branch, msg: `No doctor assigned — Branch ${branch}`, desc: `${dn} ${d} ${MONTH_NAMES[viewMonth]}` });
+result.push({ type: "warn", date: ds, branch, msg: `No doctor assigned — ${branch === "A" ? "Orchard" : "Katong"}`, desc: `${dn} ${d} ${MONTH_NAMES[viewMonth]}` });
 }
 });
 }
@@ -355,7 +355,7 @@ const warnCount = alerts.filter(a => a.type === "warn").length;
 const pendingCount = leaveLog.filter(l => l.status === "Pending").length;
 
 return (
-<>
+<React.Fragment>
 <style>{css}</style>
 <div className="app">
 <Sidebar tab={tab} setTab={setTab} dangerCount={dangerCount} warnCount={warnCount} pendingCount={pendingCount} />
@@ -379,7 +379,7 @@ onAddStaff={() => setShowStaffModal(true)}
 </div>
 {showLeaveModal && <LeaveModal staff={staff} leaveLog={leaveLog} setLeaveLog={setLeaveLog} editLeave={editLeave} onClose={() => setShowLeaveModal(false)} />}
 {showStaffModal && <StaffModal staff={staff} setStaff={setStaff} onClose={() => setShowStaffModal(false)} />}
-</>
+</React.Fragment>
 );
 }
 
@@ -395,15 +395,15 @@ return (
 <div className="sidebar">
 <div className="sidebar-logo">
 <h1>Clinic<br />Scheduler</h1>
-<span>Branch A &amp; B</span>
+<span>Orchard &amp; Katong</span>
 </div>
 <div className="sidebar-nav">
 <div className="nav-section">Overview</div>
 {nav("dashboard", "Dashboard", "◈", dangerCount + warnCount)}
 {nav("schedule", "Monthly Schedule", "▦")}
 <div className="nav-section">Branch Views</div>
-{nav("branch-a", "Branch A", "⬡")}
-{nav("branch-b", "Branch B", "⬡")}
+{nav("branch-a", "Orchard", "⬡")}
+{nav("branch-b", "Katong", "⬡")}
 <div className="nav-section">Management</div>
 {nav("leave", "Leave Log", "◷", pendingCount)}
 {nav("supervision", "MOH Compliance", "⬕", dangerCount)}
@@ -417,7 +417,7 @@ return (
 
 // ─── TOPBAR ───────────────────────────────────────────────────────────────────
 function Topbar({ tab, viewYear, viewMonth, setViewYear, setViewMonth, onAddLeave, onAddStaff }) {
-const titles = { dashboard: "Dashboard", schedule: "Monthly Schedule", "branch-a": "Branch A — Daily View", "branch-b": "Branch B — Daily View", leave: "Leave Log", supervision: "MOH Supervision Compliance", staffdb: "Staff Database", nurses: "Nurse Assignments" };
+const titles = { dashboard: "Dashboard", schedule: "Monthly Schedule", "branch-a": "Orchard — Daily View", "branch-b": "Katong — Daily View", leave: "Leave Log", supervision: "MOH Supervision Compliance", staffdb: "Staff Database", nurses: "Nurse Assignments" };
 function prevMonth() { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); } else setViewMonth(m => m - 1); }
 function nextMonth() { if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); } else setViewMonth(m => m + 1); }
 const showMonthNav = ["schedule", "branch-a", "branch-b", "supervision", "nurses"].includes(tab);
@@ -539,7 +539,7 @@ dayHeaders.push({ d, dn, isSun: dn === "Sun", isSat: dn === "Sat" });
 return (
 <div>
 <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-{[["BR-A","Branch A"], ["BR-B","Branch B"], ["AL","Annual Leave"], ["MC","Medical Leave"], ["OIL","Off-in-lieu"], ["Emergency","Emergency"], ["Maternity","Maternity"], ["OFF","Day Off"]].map(([k, label]) => (
+{[["BR-A","Orchard"], ["BR-B","Katong"], ["AL","Annual Leave"], ["MC","Medical Leave"], ["OIL","Off-in-lieu"], ["Emergency","Emergency"], ["Maternity","Maternity"], ["OFF","Day Off"]].map(([k, label]) => (
 <div key={k} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--text2)" }}>
 <div style={{ width: 10, height: 10, borderRadius: 2, background: statusStyle(k).background, border: `1px solid ${statusStyle(k).color}` }} />
 {label}
@@ -560,8 +560,8 @@ return (
 </thead>
 <tbody>
 {[{ label: "DOCTORS", items: doctors }, { label: "NURSES", items: nurses }].map(({ label, items }) => (
-<>
-<tr key={label}>
+<React.Fragment key={label}>
+<tr>
 <td colSpan={days + 1} style={{ background: "var(--surface2)", color: "var(--text3)", fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "5px 14px" }}>{label}</td>
 </tr>
 {items.map(s => (
@@ -583,7 +583,7 @@ return (
 })}
 </tr>
 ))}
-</>
+</React.Fragment>
 ))}
 </tbody>
 </table>
@@ -696,7 +696,7 @@ return (
 </td>
 <td style={{ color: "var(--text2)" }}>{l.startDate}</td>
 <td style={{ color: "var(--text2)" }}>{l.endDate}</td>
-<td style={{ color: "var(--text2)" }}>{s?.branch}</td>
+<td style={{ color: "var(--text2)" }}>{s?.branch === "A" ? "Orchard" : s?.branch === "B" ? "Katong" : s?.branch}</td>
 <td><span className={`status-pill ${l.status}`}>{l.status}</span></td>
 <td>
 <div style={{ display: "flex", gap: 6 }}>
@@ -747,7 +747,7 @@ const ok = cells.filter(c => c.status === "ok").length;
 return (
 <div key={branch} className="card" style={{ marginBottom: 20 }}>
 <div className="card-header">
-<h3>Branch {branch} — Supervision Compliance</h3>
+<h3>{branch === "A" ? "Orchard" : "Katong"} — Supervision Compliance</h3>
 <span style={{ fontSize: 11, color: violations > 0 ? "var(--danger)" : "var(--accent2)" }}>
 {violations > 0 ? `⚠ ${violations} violation${violations > 1 ? "s" : ""}` : `✓ Fully compliant`}
 </span>
@@ -798,8 +798,8 @@ return (
 <div>
 <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
 <div className="branch-toggle">
-<button className={branch === "A" ? "active" : ""} onClick={() => setBranch("A")}>Branch A</button>
-<button className={branch === "B" ? "active" : ""} onClick={() => setBranch("B")}>Branch B</button>
+<button className={branch === "A" ? "active" : ""} onClick={() => setBranch("A")}>Orchard</button>
+<button className={branch === "B" ? "active" : ""} onClick={() => setBranch("B")}>Katong</button>
 </div>
 <span style={{ fontSize: 11, color: "var(--text2)" }}>Showing confirmed assignments based on approved leave</span>
 </div>
@@ -852,7 +852,7 @@ return (
 <div className={`staff-avatar ${s.role.toLowerCase()}`}>{initials}</div>
 <div>
 <div className="staff-card-name">{s.name}</div>
-<div className="staff-card-id">{s.id} · {s.branch === "Float" ? "Float" : `Branch ${s.branch}`}</div>
+<div className="staff-card-id">{s.id} · {s.branch === "Float" ? "Float" : `${s.branch === "Float" ? "Float" : s.branch === "A" ? "Orchard" : "Katong"}`}</div>
 </div>
 <button className="btn btn-ghost btn-sm" style={{ marginLeft: "auto" }} onClick={() => toggleActive(s.id)}>
 {s.active ? "Deactivate" : "Activate"}
@@ -963,7 +963,7 @@ return (
 <div className="form-group">
 <label className="form-label">Primary Branch</label>
 <select className="form-select" value={form.branch} onChange={e => setForm(f => ({ ...f, branch: e.target.value }))}>
-<option value="A">Branch A</option><option value="B">Branch B</option><option value="Float">Float</option>
+<option value="A">Orchard</option><option value="B">Katong</option><option value="Float">Float</option>
 </select>
 </div>
 </div>
